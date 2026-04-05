@@ -23,8 +23,7 @@ class HandLandmarkerHelper(
 
     private fun setupHandLandmarker() {
         val baseOptions = BaseOptions.builder()
-            // MediaPipe descarga el modelo automáticamente desde sus servidores
-            .setModelAssetPath("hand_landmarker.task")
+            .setModelAssetPath("models/hand_landmarker.task")
             .build()
 
         val options = HandLandmarker.HandLandmarkerOptions.builder()
