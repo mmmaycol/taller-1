@@ -31,6 +31,7 @@ class GestureActionWorker(
             when (actionType) {
                 "call" -> handleCall()
                 "whatsapp" -> handleWhatsApp()
+                "sms" -> handleSMS()
                 "notification" -> handleNotification()
                 else -> Result.failure()
             }
@@ -76,6 +77,40 @@ class GestureActionWorker(
         }
     }
     
+    /**
+     * Envía un mensaje de texto (SMS) automáticamente
+     */
+    private fun handleSMS(): Result {
+        return try {
+            val phoneNumber = inputData.getString("phone_number") ?: return Result.failure()
+            val message = inputData.getString("message") ?: "Gesto detectado"
+
+            if (ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.SEND_SMS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                logAction("Permiso SEND_SMS no otorgado", "error")
+                return Result.failure()
+            }
+
+            val smsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                applicationContext.getSystemService(android.telephony.SmsManager::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                android.telephony.SmsManager.getDefault()
+            }
+
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null)
+            logAction("SMS enviado automáticamente a $phoneNumber", "success")
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logAction("Error al enviar SMS: ${e.message}", "error")
+            Result.retry()
+        }
+    }
+
     /**
      * Envía mensaje por WhatsApp usando Intent
      */

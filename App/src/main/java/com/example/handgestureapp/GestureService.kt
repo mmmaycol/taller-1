@@ -48,15 +48,6 @@ class GestureService : Service(), HandLandmarkerHelper.LandmarkerListener {
     override fun onResults(resultBundle: com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult) {
         val gesture = GestureClassifier.classify(resultBundle)
 
-        if (gesture != lastGesture) {
-            lastGesture = gesture
-            if (gesture.contains("Tres")) {
-                toggleTorch(true)   // Enciende linterna
-            } else {
-                toggleTorch(false)  // Apaga linterna
-            }
-        }
-
         // Integración con repository de Room y acciones dinámicas
         GestureActionHandler.processGesture(this, resultBundle, gesture)
     }

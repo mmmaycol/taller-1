@@ -5,6 +5,7 @@ import androidx.work.BackoffPolicy
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 object GestureActionHandler {
 
-    private const val CONFIDENCE_THRESHOLD = 0.85f // 85% confianza
+    private const val CONFIDENCE_THRESHOLD = 0.60f // Reducido de 0.85f para mayor detección
     private const val COOLDOWN_MS = 3000L // 3 segundos
 
     private var lastActionTime = 0L
@@ -45,9 +46,14 @@ object GestureActionHandler {
             val contact = contactRepository.getContactByGesture(gestureNumber)
             if (contact != null) {
                 executeAction(context, gestureNumber, contact)
-                lastActionTime = System.currentTimeMillis()
-                lastGestureType = gestureText
+            } else if (gestureNumber == 3) {
+                // Acción por defecto para el gesto 3: SMS automático y notificación
+                sendNotification(context, "Gesto 3 detectado: Enviando SMS automático...")
+                sendSMS(context, "900710184", "Hola, este es un mensaje automático (Gesto 3)")
             }
+            
+            lastActionTime = System.currentTimeMillis()
+            lastGestureType = gestureText
         }
     }
 
@@ -64,10 +70,11 @@ object GestureActionHandler {
     }
 
     private fun isConfidenceAboveThreshold(result: HandLandmarkerResult): Boolean {
-        if (result.landmarks().isEmpty()) return false
+        val handedness = result.handedness()
+        if (handedness.isEmpty() || handedness[0].isEmpty()) return false
 
         return try {
-            val score = result.handedness()[0].score()
+            val score = handedness[0][0].score()
             score >= CONFIDENCE_THRESHOLD
         } catch (e: Exception) {
             false
@@ -82,7 +89,7 @@ object GestureActionHandler {
     private fun executeAction(context: Context, gestureNumber: Int, contact: Contact) {
         when (gestureNumber) {
             0, 2 -> makeCall(context, contact.phoneNumber)
-            1, 3, 4, 5 -> sendWhatsApp(context, contact.phoneNumber, contact.message.ifEmpty { "Hola :)" })
+            1, 3, 4, 5 -> sendSMS(context, contact.phoneNumber, contact.message.ifEmpty { "Gesto detectado :)" })
         }
     }
 
@@ -94,9 +101,9 @@ object GestureActionHandler {
 
         val callRequest = OneTimeWorkRequestBuilder<GestureActionWorker>()
             .setInputData(data)
-            .setBackoffPolicy(
+            .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequestBuilder.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .build()
@@ -117,9 +124,9 @@ object GestureActionHandler {
 
         val whatsappRequest = OneTimeWorkRequestBuilder<GestureActionWorker>()
             .setInputData(data)
-            .setBackoffPolicy(
+            .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequestBuilder.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .build()
@@ -128,6 +135,41 @@ object GestureActionHandler {
             "whatsapp_${System.currentTimeMillis()}",
             androidx.work.ExistingWorkPolicy.KEEP,
             whatsappRequest
+        )
+    }
+
+    private fun sendSMS(context: Context, phoneNumber: String, message: String) {
+        val data = Data.Builder()
+            .putString("action_type", "sms")
+            .putString("phone_number", phoneNumber)
+            .putString("message", message)
+            .build()
+
+        val smsRequest = OneTimeWorkRequestBuilder<GestureActionWorker>()
+            .setInputData(data)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "sms_${System.currentTimeMillis()}",
+            androidx.work.ExistingWorkPolicy.KEEP,
+            smsRequest
+        )
+    }
+
+    private fun sendNotification(context: Context, message: String) {
+        val data = Data.Builder()
+            .putString("action_type", "notification")
+            .putString("message", message)
+            .build()
+
+        val notificationRequest = OneTimeWorkRequestBuilder<GestureActionWorker>()
+            .setInputData(data)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "notification_${System.currentTimeMillis()}",
+            androidx.work.ExistingWorkPolicy.KEEP,
+            notificationRequest
         )
     }
 }

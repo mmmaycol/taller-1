@@ -109,17 +109,6 @@ class MainActivity : AppCompatActivity(), HandLandmarkerHelper.LandmarkerListene
 
             // Procesar gesto con filtro de confianza, cooldown y acciones
             GestureActionHandler.processGesture(this, resultBundle, gesture)
-
-            // Enciende linterna si detecta "Tres", apaga con cualquier otro gesto
-            try {
-                if (gesture.contains("Tres")) {
-                    cameraManager.setTorchMode(torchCameraId, true)
-                } else {
-                    cameraManager.setTorchMode(torchCameraId, false)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 

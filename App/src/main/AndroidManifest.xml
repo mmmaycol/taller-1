@@ -10,7 +10,10 @@
     
     <!-- Permisos para llamadas telefónicas -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    
+
+    <!-- Permiso para enviar SMS automáticamente -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+
     <!-- Permisos para notificaciones -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
@@ -39,12 +42,6 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:exported="false" />
-        
-        <!-- WorkManager initialization (auto-managed) -->
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
             android:exported="false" />
 
     </application>
