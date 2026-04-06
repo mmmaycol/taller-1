@@ -2,6 +2,7 @@ package com.example.handgestureapp
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraManager
 import android.os.Bundle
@@ -31,6 +32,14 @@ class MainActivity : AppCompatActivity(), HandLandmarkerHelper.LandmarkerListene
         else Toast.makeText(this, "Se necesita permiso de cámara", Toast.LENGTH_LONG).show()
     }
 
+    private val requestCallPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) {
+            Toast.makeText(this, "Permiso CALL_PHONE necesario para realizar llamadas", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -46,11 +55,20 @@ class MainActivity : AppCompatActivity(), HandLandmarkerHelper.LandmarkerListene
             handLandmarkerHelperListener = this
         )
 
+        binding.fabSettings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED) {
             startCamera()
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestCallPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
         }
     }
 
@@ -88,6 +106,9 @@ class MainActivity : AppCompatActivity(), HandLandmarkerHelper.LandmarkerListene
             binding.overlayView.setResults(resultBundle)
             val gesture = GestureClassifier.classify(resultBundle)
             binding.tvGesture.text = gesture
+
+            // Procesar gesto con filtro de confianza, cooldown y acciones
+            GestureActionHandler.processGesture(this, resultBundle, gesture)
 
             // Enciende linterna si detecta "Tres", apaga con cualquier otro gesto
             try {

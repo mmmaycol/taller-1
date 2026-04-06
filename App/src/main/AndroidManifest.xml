@@ -7,6 +7,15 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    
+    <!-- Permisos para llamadas telefónicas -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- Permisos para notificaciones -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- Permisos para query de paquetes (WhatsApp, etc.) -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
 
     <application
@@ -26,6 +35,16 @@
         <service
             android:name=".GestureService"
             android:foregroundServiceType="camera"
+            android:exported="false" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        
+        <!-- WorkManager initialization (auto-managed) -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
             android:exported="false" />
 
     </application>

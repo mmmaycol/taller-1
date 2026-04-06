@@ -56,6 +56,9 @@ class GestureService : Service(), HandLandmarkerHelper.LandmarkerListener {
                 toggleTorch(false)  // Apaga linterna
             }
         }
+
+        // Integración con repository de Room y acciones dinámicas
+        GestureActionHandler.processGesture(this, resultBundle, gesture)
     }
 
     private fun toggleTorch(on: Boolean) {
