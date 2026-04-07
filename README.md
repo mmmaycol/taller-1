@@ -20,7 +20,7 @@ Desde la pantalla de configuración podés asignar un contacto distinto a cada g
 | 🖖 4 dedos | SMS al contacto asignado |
 | 🖐️ 5 dedos | SMS al contacto asignado |
 
-La detección tiene un umbral de confianza del 60% y un cooldown de 3 segundos entre acciones para evitar disparos accidentales.
+La detección tiene un umbral de confianza del 85% y un cooldown de 3 segundos entre acciones para evitar disparos accidentales.
 
 ## Tecnologías usadas
 
