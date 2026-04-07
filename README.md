@@ -10,12 +10,12 @@ Desde la pantalla de configuración podés asignar un contacto distinto a cada g
 
 | Gesto | Acción |
 |-------|--------|
-| ✊ 0 dedos | Llamada al contacto asignado |
-| ☝️ 1 dedo | SMS al contacto asignado |
-| ✌️ 2 dedos | Llamada al contacto asignado |
-| 🤟 3 dedos | SMS al contacto asignado |
-| 🖖 4 dedos | SMS al contacto asignado |
-| 🖐️ 5 dedos | SMS al contacto asignado |
+| ✊ 0 dedos | No ocurre acción |
+| ☝️ 1 dedo | No ocurre acción |
+| ✌️ 2 dedos | No ocurre acción |
+| 🤟 3 dedos | Envío de SMS de notificación |
+| 🖖 4 dedos | No ocurre acción |
+| 🖐️ 5 dedos | No ocurre acción |
 
 La detección tiene un umbral de confianza del 85% y un cooldown de 3 segundos entre acciones para evitar disparos accidentales.
 
