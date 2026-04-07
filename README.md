@@ -1,6 +1,3 @@
-##NOTA IMPORTANTE: SI SALE ERROR EN LA APP, NO HAY PROBLEMA, SE DEBE EJECUTAR EL 'TALLER 1' JUNTO CON EL GRADLE
-# Hand Gesture App
-
 Aplicación Android que detecta gestos de mano en tiempo real usando la cámara frontal y los convierte en acciones como llamadas telefónicas o mensajes SMS.
 
 ## ¿Qué hace?
@@ -66,6 +63,8 @@ La app solicita los siguientes permisos al instalarse o en el primer uso:
 2. Abrir el proyecto en **Android Studio**
 3. Conectar un dispositivo Android o iniciar un emulador con cámara
 4. Darle a **Run** (`Shift + F10`)
+5. **NOTA IMPORTANTE:** Se debe ejectuar las carpetas Gradle Scripts y Taller1, ya que puede existir un error al ejecutar App, por eso se debe ejecutar las carpetas mencionadas.
+# Hand Gesture App
 
 > Requiere Android 8.0 (API 26) o superior.
 
