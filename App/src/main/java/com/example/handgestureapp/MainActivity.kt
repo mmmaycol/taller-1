@@ -59,6 +59,10 @@ class MainActivity : AppCompatActivity(), HandLandmarkerHelper.LandmarkerListene
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
+        binding.fabDashboard.setOnClickListener {
+            startActivity(Intent(this, DashboardActivity::class.java))
+        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_GRANTED) {
             startCamera()

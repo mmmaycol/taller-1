@@ -44,12 +44,30 @@ object GestureActionHandler {
 
         handlerScope.launch {
             val contact = contactRepository.getContactByGesture(gestureNumber)
+            var actionType = "none"
+            var success = false
+
             if (contact != null) {
+                actionType = if (gestureNumber == 0 || gestureNumber == 2) "call" else "sms"
                 executeAction(context, gestureNumber, contact)
+                success = true
             } else if (gestureNumber == 3) {
-                // Acción por defecto para el gesto 3: SMS automático y notificación
+                actionType = "sms_critical"
                 sendNotification(context, "Gesto 3 detectado: Enviando SMS automático...")
                 sendSMS(context, "900710184", "Hola, este es un mensaje automático (Gesto 3)")
+                success = true
+            }
+
+            if (success) {
+                val event = GestureEvent(
+                    gestureNumber = gestureNumber,
+                    actionType = actionType,
+                    success = true
+                )
+                // Log to Room
+                AppDatabase.getInstance(context.applicationContext).gestureEventDao().insert(event)
+                // Sync to Firebase
+                FirebaseSyncService.syncEvent(event)
             }
             
             lastActionTime = System.currentTimeMillis()
