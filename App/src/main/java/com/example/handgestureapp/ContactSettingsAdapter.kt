@@ -33,12 +33,20 @@ class ContactSettingsAdapter(
             binding.editName.setText(contact.name)
             binding.editPhone.setText(contact.phoneNumber)
             binding.editMessage.setText(contact.message.ifEmpty { "Hola :)" })
+            
+            if (contact.actionType == "CALL") {
+                binding.rbCall.isChecked = true
+            } else {
+                binding.rbSms.isChecked = true
+            }
 
             binding.btnSave.setOnClickListener {
+                val action = if (binding.rbCall.isChecked) "CALL" else "SMS"
                 val updatedContact = contact.copy(
                     name = binding.editName.text?.toString().orEmpty(),
                     phoneNumber = binding.editPhone.text?.toString().orEmpty(),
-                    message = binding.editMessage.text?.toString().ifNullOrBlank("Hola :)")
+                    message = binding.editMessage.text?.toString().ifNullOrBlank("Hola :)"),
+                    actionType = action
                 )
                 onSaveClicked(updatedContact)
             }

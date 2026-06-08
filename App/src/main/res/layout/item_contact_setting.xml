@@ -66,6 +66,34 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Acción a realizar:"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbSms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enviar SMS"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Llamar" />
+        </RadioGroup>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="match_parent"

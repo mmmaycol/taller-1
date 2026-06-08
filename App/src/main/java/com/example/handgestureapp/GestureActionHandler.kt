@@ -48,8 +48,8 @@ object GestureActionHandler {
             var success = false
 
             if (contact != null) {
-                actionType = if (gestureNumber == 0 || gestureNumber == 2) "call" else "sms"
-                executeAction(context, gestureNumber, contact)
+                actionType = contact.actionType.lowercase()
+                executeAction(context, contact)
                 success = true
             } else if (gestureNumber == 3) {
                 actionType = "sms_critical"
@@ -104,10 +104,14 @@ object GestureActionHandler {
         return timeSinceLastAction < COOLDOWN_MS
     }
 
-    private fun executeAction(context: Context, gestureNumber: Int, contact: Contact) {
-        when (gestureNumber) {
-            0, 2 -> makeCall(context, contact.phoneNumber)
-            1, 3, 4, 5 -> sendSMS(context, contact.phoneNumber, contact.message.ifEmpty { "Gesto detectado :)" })
+    private fun executeAction(context: Context, contact: Contact) {
+        if (contact.actionType == "CALL") {
+            makeCall(context, contact.phoneNumber)
+            sendNotification(context, "Iniciando llamada a ${contact.name.ifEmpty { contact.phoneNumber }}")
+        } else {
+            val msg = contact.message.ifEmpty { "Gesto detectado :)" }
+            sendSMS(context, contact.phoneNumber, msg)
+            sendNotification(context, "SMS enviado a ${contact.name.ifEmpty { contact.phoneNumber }}: $msg")
         }
     }
 

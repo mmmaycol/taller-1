@@ -10,5 +10,6 @@ data class Contact(
     val gestureId: Int,
     val name: String,
     val phoneNumber: String,
-    val message: String
+    val message: String,
+    val actionType: String = "SMS" // "CALL" o "SMS"
 )
